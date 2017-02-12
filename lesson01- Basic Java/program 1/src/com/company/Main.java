@@ -22,6 +22,10 @@ public class Main {
 
         double myDouble = 123.4; // 8 bytes
 
+
+
+
+
         int x = 5;
         x = 5 + 3 + 1;
 
