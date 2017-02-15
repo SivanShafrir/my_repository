@@ -1,6 +1,5 @@
 package com.company;
 //ארבעה סוגים של מחלקות מקוננות
-
 public class Main {
 
     public static void main(String[] args) {
