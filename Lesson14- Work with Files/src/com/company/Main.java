@@ -64,7 +64,7 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }finally {
-            if(inputStream!=null)
+            if (inputStream != null)
                 try {
                     inputStream.close();
                 } catch (IOException e) {
@@ -72,12 +72,25 @@ public class Main {
                 }
 
 
-        whiteInTxtInt();
+            whiteInTxtInt();
             reverseWords(file);
         }
 
+        int [] arr= new int[0];
+        try {
+            arr = kBiggest(3);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        System.out.println();
+        for (int i = 0; i < 3; i++)
+            System.out.print(arr[i]+  ", ");
+
     }
 
+/*1.	לכתוב פונקציה סטטית שלא מקבלת פרמטרים, שיוצרת קובץ במחשב שלי שבמקום לכתוב בו סטרינג תכתוב בו אינטים,
+הפונקציה תכתוב לקובץ כמות אקראית וגדולה שלא אינטים והמספרים יהיו אקראיים (random)
+    בין מאה אלף ל200 אלף אינטים*/
 
 
     public static void whiteInTxtInt() {
@@ -114,6 +127,9 @@ public class Main {
         System.out.println(maxInt(file1));
     }
 
+
+
+/*2.	פונקציה נוספת סטטית תקרא את הקובץ ותחזיר אינט שהוא האינט הכי גדול בקובץ, מה המספר הכי גדול בקובץ*/
     public static int maxInt(File file) {
         byte[] buffer = new byte[4];
         int b;
@@ -141,6 +157,62 @@ public class Main {
 //פונקציה שמקבלת סטרינג וכותבת אותה לקובץ
         return 1;
     }
+
+
+/*3.	הפונקציה תקבל פרמטר k ותצתרך להחזיר מערך של k האינטים הכי גדולים בקובץ.*/
+static int[] kBiggest(int k) throws FileNotFoundException {
+    File filet = new File("C:\\Users\\hackeru\\Documents\\sivan shafrir\\temp6.txt");
+    OutputStream outputStream = null;
+    InputStream inputStream = null;
+    byte[] buffer=new byte[4];
+    try{
+        outputStream=new FileOutputStream(filet);
+        inputStream=new FileInputStream(filet);
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 0; i < 30; i++) {
+            int rnd = random.nextInt(50);
+            System.out.print(rnd);
+            System.out.print(",");
+
+            ByteBuffer.wrap(buffer).putInt(rnd);
+            outputStream.write(buffer);
+        }
+        int []arr= new int[k];
+        for (int i = 0; i < k;  arr[i++] = 0);
+        int actuallyRead;
+
+        while ((actuallyRead=inputStream.read(buffer))!=-1){
+            if(actuallyRead!=4)
+                throw new InvalidParameterException();
+            int temp=ByteBuffer.wrap(buffer).getInt();
+            int min = Integer.MAX_VALUE;
+            int pos = 0;
+            for (int i = 0; i < k; i++) {
+                if(arr[i]<min){
+                    min = arr[i];
+                    pos = i;
+                }
+            }
+            if(min < temp){
+                arr[pos] = temp;
+            }
+        }
+        return arr;
+    } catch (Exception e) {
+        e.printStackTrace();
+    } finally {
+        if(outputStream != null)
+            try {
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+    return null;
+}
+
+
+   /* 4.	פונקציה שמקבלת סטרינג וכותבת אותו לקובץ, ונכתוב עוד פונקציה בעבור אותו קובץ שתהפוך את הסדר של הסטרינג.*/
     //רוורס לכל מילה בקובץ
     //בוואן בית יש ערך של בית אחד כל פעם
     //בצאר סי יש כל פעם את התו הבא
