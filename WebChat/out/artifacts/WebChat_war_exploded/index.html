@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat</title>
+    <link href="index.css" rel="stylesheet">
+    <script src="jquery-3.2.1.min.js"></script>
+    <script>
+
+        var messages = [];
+        function renderMessages() {
+            var str = "";
+            for(var i=0;i<messages.length;i++){
+                str += messages[i] + "<br/>";
+            }
+            $("#divMessages").html(str);
+        }
+        function getMessages() {
+            $.get("/MainServlet?action=check&from="+messages.length, function (data, status) {
+                if(status == "success"){
+                    if(data.length > 0){
+                        var newMessages = data.split("&");
+                        for(var i=0;i<newMessages.length;i++)
+                            messages.push(newMessages[i]);
+                        renderMessages();
+                    }
+                }
+            });
+            setTimeout(function () {
+                getMessages();
+            }, 200);
+        }
+        function init() {
+            getMessages();
+            $("#divChat").hide();
+        }
+        function SignUp() {
+            var un = $("#txtUserName").val();
+            var pw = $("#txtPassword").val();
+            if(un.length == 0 || pw.length == 0)
+                return;
+            $.get("/MainServlet?action=signUp&username=" + un+"&password="+pw, function (data, status) {
+                //TODO: enable the button
+                if(status=="success"){
+                    if(data == "connect"){
+                        $("#divChat").show();
+                        $("#divSignIn").hide();
+                    }else{
+                        $("#lblError").val("exists");
+                    }
+                }else{
+                    $("#lblError").val("error");
+                }
+            });
+        }
+        function SignIn() {
+            var un = $("#txtUserName").val();
+            var pw = $("#txtPassword").val();
+            if(un.length == 0 || pw.length == 0)
+                return;
+            $.get("/MainServlet?action=signIn&username=" + un+"&password="+pw, function (data, status) {
+                //TODO: enable the button
+                if(status=="success"){
+                    if(data == "connect"){
+                        $("#divChat").show();
+                        $("#divSignIn").hide();
+                    }else{
+                        $("#lblError").val("does not exist");
+                    }
+                }else{
+                    $("#lblError").val("error");
+                }
+            });
+        }
+        function btnSend() {
+            var msg = $("#txtMessage").val();
+            //TODO: disable the button
+            if(msg.length == 0)
+                return;
+            $.get("/MainServlet?action=send&message=" + msg, function (data, status) {
+                //TODO: enable the button
+                if(status=="success"){
+                    if(data == "ok"){
+                        $("#txtMessage").val("");
+                        $("#lblResult").val("send");
+                    }else{
+                        $("#lblResult").val("error");
+                    }
+                }else{
+                    $("#lblResult").val("error");
+                }
+            });
+        }
+    </script>
+</head>
+<body onload="init()" >
+<div class="all_site">
+    <div id="divSignIn">
+        <label id="lblUserName">Enter User Name:</label>
+        <input type="text" id="txtUserName">
+        <br/>
+        <label id="lblPassword">Enter Password:</label>
+        <input type="text" id="txtPassword">
+        <br/>
+        <button id="btnSignUp" onclick="SignUp()" >SignUp</button>
+        <button id="btnSignIn" onclick="SignIn()" >SignIn</button>
+        <label id="lblError"></label>
+    </div>
+    <div id="divChat">
+        <h1>Welcome to our awesome chat</h1>
+        <div id="divMessages"></div>
+        <input type="text" id="txtMessage">
+        <button id="btnSend" onclick="btnSend()">Send</button>
+        <span id="lblResult"></span>
+    </div>
+</div>
+</body>
+</html>
